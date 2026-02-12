@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Love-o-Matic Quiz 💕</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to right, #ff9a9e, #fecfef);
+      text-align: center;
+      padding: 50px;
+      color: #333;
+    }
+    h1 {
+      font-size: 2.5em;
+      color: #d6336c;
+      text-shadow: 2px 2px #ffe3e3;
+    }
+    .question {
+      margin: 30px 0 20px;
+      font-size: 1.6em;
+      font-weight: bold;
+      color: #b3244a;
+      background: rgba(255,255,255,0.5);
+      padding: 15px;
+      border-radius: 40px;
+      display: inline-block;
+      backdrop-filter: blur(2px);
+      box-shadow: 0 5px 15px rgba(214, 51, 108, 0.2);
+    }
+    button {
+      background: #ff6b6b;
+      border: none;
+      padding: 12px 28px;
+      margin: 12px;
+      border-radius: 50px;
+      color: white;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 0 #b33c3c;
+      border: 2px solid #fff2f2;
+    }
+    button:hover {
+      transform: scale(1.15);
+      background: #ff4757;
+      box-shadow: 0 6px 0 #a13333;
+    }
+    #result {
+      margin-top: 30px;
+      font-size: 1.7em;
+      color: #d6336c;
+      background: rgba(255, 245, 245, 0.8);
+      padding: 20px;
+      border-radius: 60px;
+      display: inline-block;
+      max-width: 80%;
+      border: 3px dashed #ff99aa;
+      backdrop-filter: blur(4px);
+      transition: all 0.5s;
+    }
+    .hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .heart {
+      position: absolute;
+      color: #ff3366;
+      font-size: 26px;
+      animation: float 5s linear infinite;
+      text-shadow: 0 0 10px #ffb3c6;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh) scale(0.8); opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1.8); opacity: 0; }
+    }
+    #certificate {
+      display: none;
+      margin-top: 50px;
+      padding: 40px;
+      border: 8px double #d6336c;
+      border-radius: 40px;
+      background: #fff9fb;
+      font-size: 1.4em;
+      box-shadow: 0 0 40px #ffb6c1;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      z-index: 10;
+      animation: pop 0.8s;
+    }
+    @keyframes pop {
+      0% { transform: scale(0.2); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    #certificate h2 {
+      color: #d6336c;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px #ffccd5;
+    }
+    #certificate p {
+      color: #9d1f4b;
+    }
+    .small-note {
+      font-size: 0.9em;
+      color: #b9476b;
+      margin-top: 30px;
+    }
+    #progress {
+      font-size: 1.1em;
+      color: #b82e5c;
+      background: #ffe9f0;
+      padding: 8px 20px;
+      border-radius: 30px;
+      display: inline-block;
+      margin-bottom: 10px;
+      border: 1px solid #ffa5b0;
+    }
+    .extra-sparkle {
+      background: radial-gradient(circle at 20% 30%, #ffe6f0, transparent);
+    }
+  </style>
+</head>
+<body>
+  <h1>💖 Love-o-Matic 2.0 💖</h1>
+  <div id="progress">💘 Question 1/4</div>
+  <div id="quiz"></div>
+  <div id="result"></div>
+  <div class="hearts" id="hearts"></div>
+  <div id="certificate">
+    <h2>💝 Certificate of Eternal Love 💝</h2>
+    <p>This certifies that <strong>Matin — Best Girlfriend Ever</strong> has unlocked infinite love, answered with heart, and made the algorithm blush 💕</p>
+    <p>Signed with a thousand kisses,<br>💌 Your forever Valentine</p>
+    <p class="small-note">✨ you + me = infinite ✨</p>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        text: "What’s my favorite way to annoy you?",
+        answers: ["Tickling you", "Stealing your fries", "Sending memes at 2 AM"]
+      },
+      {
+        text: "Which of these is the cutest thing you do?",
+        answers: ["Your sleepy smile", "Your laugh", "The way you say my name"]
+      },
+      {
+        text: "If we were a rom-com couple, which cliché fits us best?",
+        answers: ["Love at first sight", "Best friends to lovers", "Accidental meet-cute"]
+      },
+      {
+        text: "What’s the best thing about us?",
+        answers: ["We laugh together", "We support each other", "We’re unstoppable as a team"]
+      }
+    ];
+
+    // ----- DYNAMIC, PERSONALIZED COMMENTS FOR EACH ANSWER -----
+    const answerComments = {
+      "Tickling you": "Okay yes, your giggles are the cutest sound ever 🥰",
+      "Stealing your fries": "Because everything tastes better when it's yours — even stolen fries 🍟💋",
+      "Sending memes at 2 AM": "Our love language is chaotic late-night laughter 😂🌙",
+      "Your sleepy smile": "That groggy, messy-haired smile? DEADLY cute. I live for it 🛏️👼",
+      "Your laugh": "It's literally my favorite song — and I want it on repeat 🎶😆",
+      "The way you say my name": "Nobody — I mean nobody — says it with that much heart. melts me every time 💘",
+      "Love at first sight": "Knew it. The moment I saw you, my heart just knew 💫",
+      "Best friends to lovers": "The slow burn, the inside jokes, the 'oh wait I'm in love' — our story is legendary 🔥📖",
+      "Accidental meet-cute": "The universe literally bumped us together. Romantic destiny ✨",
+      "We laugh together": "We literally have our own language of wheezes and snorts. best thing ever 🤣💞",
+      "We support each other": "You’re my biggest cheerleader, I’m yours — unstoppable duo 💪❤️",
+      "We’re unstoppable as a team": "Like peanut butter & jelly, but cooler. we just work 🍇🥜"
+    };
+
+    // Additional sweet talk for random sprinkles
+    const extraPraise = [
+      "You always know the right answer 💯",
+      "Matin, you're basically a love genius 🧠❤️",
+      "This is why we're endgame 🎯",
+      "You just made the Love-o-Matic overheat 🔥",
+      "Correct. Obviously. Because it's YOU.",
+      "This quiz is easy when you're this perfect 😘"
+    ];
+
+    let currentQuestion = 0;
+
+    function updateProgress() {
+      const progressDiv = document.getElementById('progress');
+      if (currentQuestion < questions.length) {
+        progressDiv.innerHTML = `💘 Question ${currentQuestion + 1}/${questions.length} &nbsp;&nbsp;💘`;
+      } else {
+        progressDiv.style.opacity = '0';
+      }
+    }
+
+    function showQuestion() {
+      if (currentQuestion < questions.length) {
+        const q = questions[currentQuestion];
+        let html = `<div class="question">${q.text}</div>`;
+        q.answers.forEach(ans => {
+          html += `<button onclick="showResult('${ans.replace(/'/g, "\\'")}')">${ans}</button>`;
+        });
+        document.getElementById('quiz').innerHTML = html;
+        updateProgress();
+        // Hide certificate if somehow visible
+        document.getElementById('certificate').style.display = 'none';
+      } else {
+        // All questions done: show certificate, hide other stuff
+        document.getElementById('quiz').style.display = 'none';
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('progress').style.display = 'none';
+        document.getElementById('certificate').style.display = 'block';
+        // massive heart celebration
+        releaseHearts(40);
+        releaseHearts(30); // double burst
+      }
+    }
+
+    // ---------- SHOW RESULT WITH DYNAMIC COMMENT ----------
+    window.showResult = function(answer) {
+      // Get personalized comment based on answer, or fallback
+      let personalMessage = answerComments[answer];
+      if (!personalMessage) {
+        personalMessage = `I just love that. You're amazing 💗`; // fallback, but we have all covered
+      }
+
+      // Add a random sprinkle of extra sweetness
+      const randomExtra = extraPraise[Math.floor(Math.random() * extraPraise.length)];
+      
+      // Also sometimes add an extra emoji shower based on answer content
+      let emojiExtra = '';
+      if (answer.includes('fries') || answer.includes('memes')) emojiExtra = '🍟😂';
+      else if (answer.includes('smile')) emojiExtra = '😊✨';
+      else if (answer.includes('laugh')) emojiExtra = '😆🎵';
+      else if (answer.includes('name')) emojiExtra = '💞🗣️';
+      else if (answer.includes('sight')) emojiExtra = '👀💘';
+      else if (answer.includes('friends')) emojiExtra = '👯➡️💑';
+      else if (answer.includes('meet')) emojiExtra = '🚀💖';
+      else if (answer.includes('laugh together')) emojiExtra = '🤣💞';
+      else if (answer.includes('support')) emojiExtra = '🤝🌈';
+      else if (answer.includes('unstoppable')) emojiExtra = '⚡💪';
+      else emojiExtra = '💕';
+
+      // Build the dynamic message — it changes every time!
+      const dynamicMessage = `✨ <strong>${answer}</strong> ✨ <br><br> 
+                              💬 ${personalMessage} <br> 
+                              🌸 ${randomExtra} &nbsp; ${emojiExtra}`;
+
+      document.getElementById('result').innerHTML = dynamicMessage;
+      
+      // Burst of hearts unique to each answer (more dynamic)
+      releaseHearts(16); 
+      
+      // Move to next question after a sweet pause
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+          showQuestion();
+        } else {
+          showQuestion(); // triggers the final certificate flow
+        }
+      }, 2800); // little more time to read sweetness
+    };
+
+    // ---------- HEART EXPLOSION (dynamic count) ----------
+    function releaseHearts(count = 14) {
+      const heartsContainer = document.getElementById('hearts');
+      for (let i = 0; i < count; i++) {
+        let heart = document.createElement('div');
+        heart.className = 'heart';
+        // Mix heart types
+        const heartTypes = ['❤️', '🧡', '💛', '💚', '💙', '💜', '🩷', '💖', '💗', '💘'];
+        heart.innerHTML = heartTypes[Math.floor(Math.random() * heartTypes.length)];
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.animationDuration = (2 + Math.random() * 4) + 's';
+        heart.style.fontSize = (16 + Math.floor(Math.random() * 30)) + 'px';
+        heartsContainer.appendChild(heart);
+        setTimeout(() => heart.remove(), 5000);
+      }
+    }
+
+    // initial progress
+    updateProgress();
+    showQuestion();
+
+    // extra feature: throw little hearts when hovering buttons (just for fun)
+    document.addEventListener('mouseover', function(e) {
+      if (e.target.tagName === 'BUTTON') {
+        // subtle sparkle
+        e.target.style.transition = '0.2s';
+      }
+    });
+
+  </script>
+  <!-- add a hidden romantic touch -->
+  <div style="display: none;">forever and always, matin 💫</div>
+</body>
+</html>
